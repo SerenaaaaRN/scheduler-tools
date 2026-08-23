@@ -24,45 +24,20 @@ def get_course_info(course_name: str) -> str:
 def get_lecturer_info(query: str) -> str:
     query = query.lower().strip()
 
-    if query in LECTURERS:
-        lecturer = LECTURERS[query]
-        mk_list = ", ".join(
-            [COURSES[mk]["nama"] for mk in lecturer["mk_yang_diampu"] if mk in COURSES]
-        )
-        return (
-            f"Dosen: {lecturer['nama']}\n"
-            f"Email: {lecturer.get('email', '-')}\n"
-            f"Keahlian: {', '.join(lecturer.get('keahlian', []))}\n"
-            f"Mata Kuliah yang Diampu: {mk_list}"
-        )
-
     for key, lecturer in LECTURERS.items():
-        if query in lecturer["nama"].lower() or query in key:
+        lecturer_name = lecturer["nama"].lower().strip()
+        taught_courses = [
+            mk.lower().strip() for mk in lecturer.get("mk_yang_diampu", [])
+        ]
+
+        if query == lecturer_name or query in lecturer_name or query in taught_courses:
             mk_list = ", ".join(
-                [
-                    COURSES[mk]["nama"]
-                    for mk in lecturer["mk_yang_diampu"]
-                    if mk in COURSES
-                ]
+                COURSES[mk]["nama"]
+                for mk in lecturer["mk_yang_diampu"]
+                if mk in COURSES
             )
             return (
-                f"Dosen: {lecturer['nama']}\n"
-                f"Email: {lecturer.get('email', '-')}\n"
-                f"Keahlian: {', '.join(lecturer.get('keahlian', []))}\n"
-                f"Mata Kuliah yang Diampu: {mk_list}"
-            )
-
-    for key, lecturer in LECTURERS.items():
-        if query in [mk.lower() for mk in lecturer["mk_yang_diampu"]]:
-            mk_list = ", ".join(
-                [
-                    COURSES[mk]["nama"]
-                    for mk in lecturer["mk_yang_diampu"]
-                    if mk in COURSES
-                ]
-            )
-            return (
-                f"Dosen: {lecturer['nama']}\n"
+                f"Dosen: {lecturer['nama'].strip()}\n"
                 f"Email: {lecturer.get('email', '-')}\n"
                 f"Keahlian: {', '.join(lecturer.get('keahlian', []))}\n"
                 f"Mata Kuliah yang Diampu: {mk_list}"
